@@ -1,5 +1,6 @@
 package com.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,12 +9,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "authors")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Author {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +27,7 @@ public class Author {
     @Column(name = "biography", length = 2000)
     private String biography;
 
-    @ManyToMany(mappedBy = "authors")
+    @ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Book> books = new HashSet<>();
 }
