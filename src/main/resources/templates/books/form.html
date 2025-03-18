@@ -43,8 +43,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="authors" class="form-label">Authors</label>
-            <select multiple class="form-select" id="authors" name="authorIds">
+            <label for="authorIds" class="form-label">Authors</label>
+            <select multiple class="form-select" id="authorIds" name="authorIds">
                 <option th:each="author : ${authors}"
                         th:value="${author.id}"
                         th:text="${author.firstName + ' ' + author.lastName}"
@@ -55,8 +55,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="publisher" class="form-label">Publisher</label>
-            <select class="form-select" id="publisher" name="publisherId">
+            <label for="publisherId" class="form-label">Publisher</label>
+            <select class="form-select" id="publisherId" name="publisherId">
                 <option value="">-- Select Publisher --</option>
                 <option th:each="publisher : ${publishers}"
                         th:value="${publisher.id}"

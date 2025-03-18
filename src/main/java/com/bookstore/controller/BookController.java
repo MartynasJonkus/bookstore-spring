@@ -1,6 +1,8 @@
 package com.bookstore.controller;
 
+import com.bookstore.model.Author;
 import com.bookstore.model.Book;
+import com.bookstore.model.Publisher;
 import com.bookstore.service.AuthorService;
 import com.bookstore.service.BookService;
 import com.bookstore.service.PublisherService;
@@ -9,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/books")
@@ -42,8 +46,18 @@ public class BookController {
     }
 
     @PostMapping
-    public String saveBook(@ModelAttribute Book book, @RequestParam("authorIds") List<Long> authorIds,
-                           @RequestParam("publisherId") Long publisherId) {
+    public String saveBook(@ModelAttribute Book book,
+                           @RequestParam(value = "authorIds", required = false) List<Long> authorIds,
+                           @RequestParam(value = "publisherId", required = false) Long publisherId) {
+
+        Set<Author> selectedAuthors = new HashSet<>();
+        if (authorIds != null && !authorIds.isEmpty()) {
+            for (Long authorId : authorIds) {
+                authorService.findAuthorById(authorId).ifPresent(selectedAuthors::add);
+            }
+        }
+        System.out.println(selectedAuthors);
+
         if (book.getId() != null) {
             Book existingBook = bookService.findBookById(book.getId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid book ID: " + book.getId()));
@@ -53,38 +67,26 @@ public class BookController {
             existingBook.setIsbn(book.getIsbn());
             existingBook.setPublicationYear(book.getPublicationYear());
 
-            existingBook.getAuthors().clear();
-            if (authorIds != null && !authorIds.isEmpty()) {
-                authorIds.forEach(authorId -> {
-                    authorService.findAuthorById(authorId)
-                            .ifPresent(existingBook.getAuthors()::add);
-                });
-            }
-
             if (publisherId != null) {
-                publisherService.findPublisherById(publisherId)
-                        .ifPresent(existingBook::setPublisher);
+                publisherService.findPublisherById(publisherId).ifPresent(existingBook::setPublisher);
             } else {
                 existingBook.setPublisher(null);
             }
 
+            existingBook.getAuthorsReference().clear();
+            existingBook.getAuthorsReference().addAll(selectedAuthors);
+
             bookService.saveBook(existingBook);
-        }
-        else {
-            if (authorIds != null && !authorIds.isEmpty()) {
-                authorIds.forEach(authorId -> {
-                    authorService.findAuthorById(authorId)
-                            .ifPresent(book.getAuthors()::add);
-                });
-            }
+        } else {
+            book.setAuthors(selectedAuthors);
 
             if (publisherId != null) {
-                publisherService.findPublisherById(publisherId)
-                        .ifPresent(book::setPublisher);
+                publisherService.findPublisherById(publisherId).ifPresent(book::setPublisher);
             }
 
             bookService.saveBook(book);
         }
+
         return "redirect:/books";
     }
 

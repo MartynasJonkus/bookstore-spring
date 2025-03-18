@@ -3,9 +3,7 @@ package com.bookstore.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,7 +36,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-    private List<Author> authors = new ArrayList<>();
+    private Set<Author> authors = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "publisher_id")
@@ -46,5 +44,9 @@ public class Book {
 
     public Set<Author> getAuthors() {
         return new HashSet<>(authors);
+    }
+
+    public Set<Author> getAuthorsReference() {
+        return this.authors;
     }
 }
