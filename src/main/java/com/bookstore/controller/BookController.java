@@ -68,7 +68,7 @@ public class BookController {
             existingBook.setPublicationYear(book.getPublicationYear());
 
             if (publisherId != null) {
-                publisherService.findPublisherById(publisherId).ifPresent(existingBook::setPublisher);
+                existingBook.setPublisher(publisherService.findPublisherById(publisherId));
             } else {
                 existingBook.setPublisher(null);
             }
@@ -81,7 +81,7 @@ public class BookController {
             book.setAuthors(selectedAuthors);
 
             if (publisherId != null) {
-                publisherService.findPublisherById(publisherId).ifPresent(book::setPublisher);
+                book.setPublisher(publisherService.findPublisherById(publisherId));
             }
 
             bookService.saveBook(book);

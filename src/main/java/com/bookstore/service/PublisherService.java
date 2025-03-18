@@ -1,7 +1,7 @@
 package com.bookstore.service;
 
+import com.bookstore.mappers.PublisherMapper;
 import com.bookstore.model.Publisher;
-import com.bookstore.repository.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,26 +11,31 @@ import java.util.Optional;
 @Service
 public class PublisherService {
 
-    private final PublisherRepository publisherRepository;
+    private final PublisherMapper publisherMapper;
 
     @Autowired
-    public PublisherService(PublisherRepository publisherRepository) {
-        this.publisherRepository = publisherRepository;
+    public PublisherService(PublisherMapper publisherMapper) {
+        this.publisherMapper = publisherMapper;
     }
 
     public List<Publisher> findAllPublishers() {
-        return publisherRepository.findAll();
+        return publisherMapper.findAll();
     }
 
-    public Optional<Publisher> findPublisherById(Long id) {
-        return publisherRepository.findById(id);
+    public Publisher findPublisherById(Long id) {
+        return publisherMapper.findById(id);
     }
 
     public Publisher savePublisher(Publisher publisher) {
-        return publisherRepository.save(publisher);
+        if (publisher.getId() != null) {
+            publisherMapper.update(publisher);
+        } else {
+            publisherMapper.insert(publisher);
+        }
+        return publisher;
     }
 
     public void deletePublisherById(Long id) {
-        publisherRepository.deleteById(id);
+        publisherMapper.deleteById(id);
     }
 }

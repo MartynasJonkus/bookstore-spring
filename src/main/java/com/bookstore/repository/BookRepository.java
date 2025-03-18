@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
-    @Query("SELECT b FROM Book b LEFT JOIN FETCH b.authors LEFT JOIN FETCH b.publisher")
-    List<Book> findAllWithAuthorsAndPublisher();
+    @Query("SELECT b FROM Book b LEFT JOIN FETCH b.authors")
+    List<Book> findAllWithAuthors();
 }

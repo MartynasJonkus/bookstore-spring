@@ -1,5 +1,6 @@
 package com.bookstore.service;
 
+import com.bookstore.mappers.PublisherMapper;
 import com.bookstore.model.Book;
 import com.bookstore.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,22 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final PublisherMapper publisherMapper;
 
     @Autowired
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, PublisherMapper publisherMapper) {
         this.bookRepository = bookRepository;
+        this.publisherMapper = publisherMapper;
     }
 
     public List<Book> findAllBooks() {
-        return bookRepository.findAllWithAuthorsAndPublisher();
+        List<Book> books = bookRepository.findAllWithAuthors();
+        for (Book book : books) {
+            if (book.getPublisherId() != null) {
+                book.setPublisher(publisherMapper.findById(book.getPublisherId()));
+            }
+        }
+        return books;
     }
 
     public Optional<Book> findBookById(Long id) {

@@ -1,16 +1,11 @@
 package com.bookstore;
 
-import com.bookstore.model.Author;
-import com.bookstore.model.Book;
-import com.bookstore.repository.AuthorRepository;
-import org.springframework.boot.CommandLineRunner;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import java.util.HashSet;
 
 @SpringBootApplication
+@MapperScan("com.bookstore.mappers")
 public class BookstoreApp {
 
     public static void main(String[] args) {

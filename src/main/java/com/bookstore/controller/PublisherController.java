@@ -41,8 +41,10 @@ public class PublisherController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Publisher publisher = publisherService.findPublisherById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid publisher ID: " + id));
+        Publisher publisher = publisherService.findPublisherById(id);
+        if (publisher == null) {
+            throw new IllegalArgumentException("Invalid publisher ID: " + id);
+        }
 
         model.addAttribute("publisher", publisher);
         return "publishers/form";
