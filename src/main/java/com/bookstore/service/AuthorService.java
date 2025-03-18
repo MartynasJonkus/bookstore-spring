@@ -1,7 +1,10 @@
 package com.bookstore.service;
 
 import com.bookstore.model.Author;
+import com.bookstore.model.Book;
 import com.bookstore.repository.AuthorRepository;
+import com.bookstore.repository.BookRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +15,12 @@ import java.util.Optional;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
 
     @Autowired
-    public AuthorService(AuthorRepository authorRepository) {
+    public AuthorService(AuthorRepository authorRepository, BookRepository bookRepository) {
         this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
     }
 
     public List<Author> findAllAuthors() {
@@ -30,7 +35,16 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
-    public void deleteAuthorById(Long id) {
-        authorRepository.deleteById(id);
+    @Transactional
+    public void deleteAuthorById(Long authorId) {
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid author ID: " + authorId));
+
+        for (Book book : author.getBooks()) {
+            book.getAuthors().remove(author);
+            bookRepository.save(book);
+        }
+
+        authorRepository.deleteById(authorId);
     }
 }
