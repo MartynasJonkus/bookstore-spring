@@ -4,9 +4,9 @@ import com.bookstore.model.Author;
 import com.bookstore.model.Book;
 import com.bookstore.repository.AuthorRepository;
 import com.bookstore.repository.BookRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,14 +23,17 @@ public class AuthorService {
         this.bookRepository = bookRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Author> findAllAuthors() {
         return authorRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Author> findAuthorById(Long id) {
         return authorRepository.findById(id);
     }
 
+    @Transactional
     public Author saveAuthor(Author author) {
         return authorRepository.save(author);
     }

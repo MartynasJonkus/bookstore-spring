@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <meta charset="UTF-8" />
+    <title>#{bookBean.book.id == null ? 'Add New Book' : 'Edit Book'}</title>
+</h:head>
+<h:body>
+    <f:metadata>
+        <f:viewParam name="id" value="#{bookBean.editId}" />
+        <f:event type="preRenderView" listener="#{bookBean.loadBook}" />
+    </f:metadata>
+
+    <div class="card">
+        <p:breadCrumb>
+            <p:menuitem value="Home" url="/" />
+            <p:menuitem value="Books" url="/books.xhtml" />
+            <p:menuitem value="#{bookBean.book.id == null ? 'Add New' : 'Edit'}" url="#" />
+        </p:breadCrumb>
+
+        <h1>#{bookBean.book.id == null ? 'Add New Book' : 'Edit Book'}</h1>
+
+        <h:form>
+            <p:panel styleClass="p-mb-3">
+                <h:inputHidden value="#{bookBean.book.id}" />
+
+                <div class="p-field p-mb-3">
+                    <p:outputLabel for="title" value="Title" />
+                    <p:inputText id="title" value="#{bookBean.book.title}"
+                                 required="true" styleClass="p-mb-2 p-d-block" />
+                    <p:message for="title" />
+                </div>
+
+                <div class="p-field p-mb-3">
+                    <p:outputLabel for="description" value="Description" />
+                    <p:inputTextarea id="description" value="#{bookBean.book.description}"
+                                     rows="3" styleClass="p-mb-2 p-d-block" />
+                </div>
+
+                <div class="p-grid p-mb-3">
+                    <div class="p-col-6">
+                        <p:outputLabel for="isbn" value="ISBN" />
+                        <p:inputText id="isbn" value="#{bookBean.book.isbn}"
+                                     styleClass="p-mb-2 p-d-block" />
+                    </div>
+
+                    <div class="p-col-6">
+                        <p:outputLabel for="publicationYear" value="Publication Year" />
+                        <p:inputNumber id="publicationYear" value="#{bookBean.book.publicationYear}"
+                                       styleClass="p-mb-2 p-d-block" />
+                    </div>
+                </div>
+
+                <div class="p-field p-mb-3">
+                    <p:outputLabel for="authors" value="Authors" />
+                    <p:selectManyMenu id="authors" value="#{bookBean.selectedAuthorIds}"
+                                      styleClass="p-mb-2 p-d-block" showCheckbox="true">
+                        <f:selectItems value="#{authorBean.authors}" var="author"
+                                       itemLabel="#{author.firstName} #{author.lastName}"
+                                       itemValue="#{author.id}" />
+                    </p:selectManyMenu>
+                    <p:outputLabel value="Hold Ctrl to select multiple authors" styleClass="p-text-light" />
+                </div>
+
+                <div class="p-field p-mb-3">
+                    <p:outputLabel for="publisher" value="Publisher" />
+                    <p:selectOneMenu id="publisher" value="#{bookBean.selectedPublisherId}"
+                                     styleClass="p-mb-2 p-d-block">
+                        <f:selectItem itemLabel="-- Select Publisher --" itemValue="" />
+                        <f:selectItems value="#{publisherBean.publishers}" var="publisher"
+                                       itemLabel="#{publisher.name}"
+                                       itemValue="#{publisher.id}" />
+                    </p:selectOneMenu>
+                </div>
+
+                <div class="p-d-flex p-mt-3">
+                    <p:commandButton value="Save" action="#{bookBean.save}" styleClass="p-mr-2" />
+                    <p:button value="Cancel" outcome="books" />
+                </div>
+            </p:panel>
+        </h:form>
+    </div>
+</h:body>
+</html>

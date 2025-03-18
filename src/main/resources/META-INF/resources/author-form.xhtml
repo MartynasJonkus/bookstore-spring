@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <meta charset="UTF-8" />
+    <title>#{authorBean.author.id == null ? 'Add New Author' : 'Edit Author'}</title>
+</h:head>
+<h:body>
+    <f:metadata>
+        <f:viewParam name="id" value="#{authorBean.editId}" />
+        <f:event type="preRenderView" listener="#{authorBean.loadAuthor}" />
+    </f:metadata>
+
+    <div class="card">
+        <p:breadCrumb>
+            <p:menuitem value="Home" url="/" />
+            <p:menuitem value="Authors" url="/authors.xhtml" />
+            <p:menuitem value="#{authorBean.author.id == null ? 'Add New' : 'Edit'}" url="#" />
+        </p:breadCrumb>
+
+        <h1>#{authorBean.author.id == null ? 'Add New Author' : 'Edit Author'}</h1>
+
+        <h:form>
+            <p:panel styleClass="p-mb-3">
+                <h:inputHidden value="#{authorBean.author.id}" />
+
+                <div class="p-field p-mb-3">
+                    <p:outputLabel for="firstName" value="First Name" />
+                    <p:inputText id="firstName" value="#{authorBean.author.firstName}"
+                                 required="true" styleClass="p-mb-2 p-d-block" />
+                    <p:message for="firstName" />
+                </div>
+
+                <div class="p-field p-mb-3">
+                    <p:outputLabel for="lastName" value="Last Name" />
+                    <p:inputText id="lastName" value="#{authorBean.author.lastName}"
+                                 required="true" styleClass="p-mb-2 p-d-block" />
+                    <p:message for="lastName" />
+                </div>
+
+                <div class="p-field p-mb-3">
+                    <p:outputLabel for="biography" value="Biography" />
+                    <p:inputTextarea id="biography" value="#{authorBean.author.biography}"
+                                     rows="5" styleClass="p-mb-2 p-d-block" />
+                </div>
+
+                <div class="p-d-flex p-mt-3">
+                    <p:commandButton value="Save" action="#{authorBean.save}" styleClass="p-mr-2" />
+                    <p:button value="Cancel" outcome="authors" />
+                </div>
+            </p:panel>
+        </h:form>
+    </div>
+</h:body>
+</html>
