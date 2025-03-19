@@ -38,13 +38,16 @@
                 <h:outputText value="#{publisher.books.size()}" />
             </p:column>
             <p:column headerText="Actions">
-                <p:link outcome="publisher-form" value="Edit" styleClass="p-mr-2">
-                    <f:param name="id" value="#{publisher.id}" />
-                </p:link>
-                <p:commandButton value="Delete" icon="pi pi-trash"
-                                 action="#{publisherBean.delete(publisher.id)}"
-                                 styleClass="p-button-danger p-button-sm"
-                                 onclick="return confirm('Are you sure you want to delete this publisher?');"/>
+                <h:form>
+                    <p:button outcome="publisher-form" value="Edit" icon="pi pi-pencil"
+                              styleClass="p-button-info p-button-sm p-mr-2">
+                        <f:param name="id" value="#{publisher.id}" />
+                    </p:button>
+                    <p:commandButton value="Delete" icon="pi pi-trash"
+                                     action="#{publisherBean.delete(publisher.id)}"
+                                     styleClass="ui-button-danger" style="background-color: #dc3545; border-color: #dc3545;"
+                                     onclick="return confirm('Are you sure you want to delete this publisher?');"/>
+                </h:form>
             </p:column>
         </p:dataTable>
     </div>

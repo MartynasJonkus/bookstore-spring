@@ -44,7 +44,6 @@ public class BookBean implements Serializable {
         books = bookService.findAllBooks();
     }
 
-    // Helper methods for dropdowns
     public List<Author> getAllAuthors() {
         return authorService.findAllAuthors();
     }
@@ -59,8 +58,12 @@ public class BookBean implements Serializable {
                 authorService.findAuthorById(id).ifPresent(authors::add)
         );
 
-        Publisher publisher = publisherService.findPublisherById(selectedPublisherId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Publisher ID: " + selectedPublisherId));
+        System.out.println("Trying to set publisher with id " + selectedPublisherId);
+        Publisher publisher = null;
+        if (selectedPublisherId != null) {
+            publisher = publisherService.findPublisherById(selectedPublisherId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid Publisher ID: " + selectedPublisherId));
+        }
 
         if(editId != null) {
             Book existing = bookService.findBookById(editId)
@@ -71,6 +74,7 @@ public class BookBean implements Serializable {
             existing.setIsbn(book.getIsbn());
             existing.setPublicationYear(book.getPublicationYear());
             existing.setAuthors(authors);
+            existing.setPublisherId(selectedPublisherId);
             existing.setPublisher(publisher);
 
             bookService.saveBook(existing);
@@ -98,8 +102,11 @@ public class BookBean implements Serializable {
                     selectedAuthorIds.add(author.getId())
             );
 
-            if(book.getPublisher() != null) {
-                selectedPublisherId = book.getPublisher().getId();
+            selectedPublisherId = book.getPublisherId();
+
+            if(selectedPublisherId != null) {
+                publisherService.findPublisherById(selectedPublisherId)
+                        .ifPresent(book::setPublisher);
             }
         }
     }

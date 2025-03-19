@@ -58,11 +58,10 @@
                     <p:outputLabel for="authors" value="Authors" />
                     <p:selectManyMenu id="authors" value="#{bookBean.selectedAuthorIds}"
                                       styleClass="p-mb-2 p-d-block" showCheckbox="true">
-                        <f:selectItems value="#{authorBean.authors}" var="author"
+                        <f:selectItems value="#{bookBean.allAuthors}" var="author"
                                        itemLabel="#{author.firstName} #{author.lastName}"
                                        itemValue="#{author.id}" />
                     </p:selectManyMenu>
-                    <p:outputLabel value="Hold Ctrl to select multiple authors" styleClass="p-text-light" />
                 </div>
 
                 <div class="p-field p-mb-3">
@@ -70,7 +69,7 @@
                     <p:selectOneMenu id="publisher" value="#{bookBean.selectedPublisherId}"
                                      styleClass="p-mb-2 p-d-block">
                         <f:selectItem itemLabel="-- Select Publisher --" itemValue="" />
-                        <f:selectItems value="#{publisherBean.publishers}" var="publisher"
+                        <f:selectItems value="#{bookBean.allPublishers}" var="publisher"
                                        itemLabel="#{publisher.name}"
                                        itemValue="#{publisher.id}" />
                     </p:selectOneMenu>
