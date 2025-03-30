@@ -1,6 +1,10 @@
 # bookstore-spring
 
-## Publishers
-- Redirect to list page after creating new entity
-- Edit just provides a new entity form
+Technologies used:
+- Spring Boot
+- H2 Database
+- Spring Data JPA
+- MyBatis
+- JSF (JoinFaces)
+
 

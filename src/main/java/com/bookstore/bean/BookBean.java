@@ -75,6 +75,7 @@ public class BookBean implements Serializable {
             bookService.saveBook(existing);
         } else {
             book.setAuthors(authors);
+            book.setPublisherId(selectedPublisherId);
             book.setPublisher(publisher);
             bookService.saveBook(book);
         }
