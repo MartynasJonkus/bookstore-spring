@@ -11,6 +11,7 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -58,23 +59,17 @@ public class BookBean implements Serializable {
                 authorService.findAuthorById(id).ifPresent(authors::add)
         );
 
-        System.out.println("Trying to set publisher with id " + selectedPublisherId);
-        Publisher publisher = null;
-        if (selectedPublisherId != null) {
-            publisher = publisherService.findPublisherById(selectedPublisherId)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid Publisher ID: " + selectedPublisherId));
-        }
+        Publisher publisher = (selectedPublisherId != null) ?
+                publisherService.findPublisherById(selectedPublisherId)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid Publisher ID: " + selectedPublisherId))
+                : null;
 
         if(editId != null) {
             Book existing = bookService.findBookById(editId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid book ID"));
 
-            existing.setTitle(book.getTitle());
-            existing.setDescription(book.getDescription());
-            existing.setIsbn(book.getIsbn());
-            existing.setPublicationYear(book.getPublicationYear());
+            BeanUtils.copyProperties(book, existing, "id", "authors", "publisher");
             existing.setAuthors(authors);
-            existing.setPublisherId(selectedPublisherId);
             existing.setPublisher(publisher);
 
             bookService.saveBook(existing);
@@ -102,12 +97,9 @@ public class BookBean implements Serializable {
                     selectedAuthorIds.add(author.getId())
             );
 
-            selectedPublisherId = book.getPublisherId();
-
-            if(selectedPublisherId != null) {
-                publisherService.findPublisherById(selectedPublisherId)
-                        .ifPresent(book::setPublisher);
-            }
+            selectedPublisherId = (book.getPublisher() != null)
+                    ? book.getPublisher().getId()
+                    : null;
         }
     }
 }

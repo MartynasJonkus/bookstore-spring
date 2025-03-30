@@ -38,16 +38,7 @@ public class Book {
     )
     private Set<Author> authors = new HashSet<>();
 
-    private Long publisherId;
-
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id")
     private Publisher publisher;
-
-    public Set<Author> getAuthors() {
-        return new HashSet<>(authors);
-    }
-
-    public Set<Author> getAuthorsReference() {
-        return this.authors;
-    }
 }

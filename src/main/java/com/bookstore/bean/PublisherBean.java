@@ -26,7 +26,6 @@ public class PublisherBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("Loading all publishers");
         publishers = publisherService.findAllPublishers();
     }
 
@@ -36,13 +35,11 @@ public class PublisherBean implements Serializable {
     }
 
     public String delete(Long id) {
-        System.out.println("Delete publisher with id: " + id);
         publisherService.deletePublisherById(id);
         return "/publishers.xhtml?faces-redirect=true";
     }
 
     public void loadPublisher() {
-        System.out.println("Load publisher");
         if(editId != null) {
             publisher = publisherService.findPublisherById(editId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid Publisher ID: " + editId));

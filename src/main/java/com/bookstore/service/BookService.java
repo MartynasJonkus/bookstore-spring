@@ -13,28 +13,20 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final PublisherService publisherService;
 
     @Autowired
-    public BookService(BookRepository bookRepository, PublisherService publisherService) {
+    public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.publisherService = publisherService;
     }
 
     @Transactional(readOnly = true)
     public List<Book> findAllBooks() {
-        List<Book> books = bookRepository.findAllWithAuthors();
-        for (Book book : books) {
-            if (book.getPublisherId() != null) {
-                book.setPublisher(publisherService.findPublisherById(book.getPublisherId()).orElse(null));
-            }
-        }
-        return books;
+        return bookRepository.findAllWithAuthorsAndPublisher();
     }
 
     @Transactional(readOnly = true)
     public Optional<Book> findBookById(Long id) {
-        return bookRepository.findById(id);
+        return bookRepository.findByIdWithAuthorsAndPublisher(id);
     }
 
     @Transactional
