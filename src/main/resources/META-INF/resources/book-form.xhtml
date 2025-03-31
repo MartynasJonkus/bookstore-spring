@@ -7,6 +7,24 @@
 <h:head>
     <meta charset="UTF-8" />
     <title>#{bookBean.book.id == null ? 'Add New Book' : 'Edit Book'}</title>
+    <style>
+        .conflict-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        .conflict-table th, .conflict-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .conflict-table th {
+            background-color: #f5f5f5;
+            text-align: left;
+        }
+        .different-value {
+            background-color: #fff8e1;
+        }
+    </style>
 </h:head>
 <h:body>
     <f:metadata>
@@ -23,7 +41,72 @@
 
         <h1>#{bookBean.book.id == null ? 'Add New Book' : 'Edit Book'}</h1>
 
-        <h:form>
+        <h:form id="mainForm">
+            <p:messages id="messages" showDetail="true" closable="true" />
+
+            <p:dialog header="Data Conflict Detected" widgetVar="conflictDialog"
+                      modal="true" width="700" closable="false"
+                      visible="#{bookBean.conflictDetected}">
+                <p>#{bookBean.errorMessage}</p>
+
+                <p:panel header="Comparison" toggleable="true" collapsed="false" styleClass="p-mb-3"
+                         rendered="#{bookBean.conflictingBook != null}">
+                    <table class="conflict-table">
+                        <tr>
+                            <th>Field</th>
+                            <th>Your Changes</th>
+                            <th>Database Version</th>
+                        </tr>
+                        <tr class="#{bookBean.book.title ne bookBean.conflictingBook.title ? 'different-value' : ''}">
+                            <td>Title</td>
+                            <td>#{bookBean.book.title}</td>
+                            <td>#{bookBean.conflictingBook.title}</td>
+                        </tr>
+                        <tr class="#{bookBean.book.isbn ne bookBean.conflictingBook.isbn ? 'different-value' : ''}">
+                            <td>ISBN</td>
+                            <td>#{bookBean.book.isbn}</td>
+                            <td>#{bookBean.conflictingBook.isbn}</td>
+                        </tr>
+                        <tr class="#{bookBean.book.publicationYear ne bookBean.conflictingBook.publicationYear ? 'different-value' : ''}">
+                            <td>Publication Year</td>
+                            <td>#{bookBean.book.publicationYear}</td>
+                            <td>#{bookBean.conflictingBook.publicationYear}</td>
+                        </tr>
+                        <tr class="#{bookBean.book.description ne bookBean.conflictingBook.description ? 'different-value' : ''}">
+                            <td>Description</td>
+                            <td>#{bookBean.book.description}</td>
+                            <td>#{bookBean.conflictingBook.description}</td>
+                        </tr>
+                        <tr class="#{bookBean.hasAuthorsDifference() ? 'different-value' : ''}">
+                            <td>Authors</td>
+                            <td>#{bookBean.getAuthorNames(bookBean.userSelectedAuthorIds)}</td>
+                            <td>#{bookBean.getAuthorNames(bookBean.conflictingAuthorIds)}</td>
+                        </tr>
+                        <tr class="#{bookBean.hasPublisherDifference() ? 'different-value' : ''}">
+                            <td>Publisher</td>
+                            <td>#{bookBean.getPublisherName(bookBean.userSelectedPublisherId)}</td>
+                            <td>#{bookBean.getPublisherName(bookBean.conflictingPublisherId)}</td>
+                        </tr>
+                        <tr>
+                            <td>Version</td>
+                            <td>#{bookBean.book.version}</td>
+                            <td>#{bookBean.conflictingBook.version}</td>
+                        </tr>
+                    </table>
+                </p:panel>
+
+                <div class="p-d-flex p-jc-between">
+                    <p:commandButton value="Use Database Version"
+                                     action="#{bookBean.resolveConflict(true)}"
+                                     update="@form" styleClass="p-mr-2"
+                                     oncomplete="PF('conflictDialog').hide()"/>
+                    <p:commandButton value="Keep My Changes"
+                                     action="#{bookBean.resolveConflict(false)}"
+                                     update="@form"
+                                     oncomplete="PF('conflictDialog').hide()"/>
+                </div>
+            </p:dialog>
+
             <p:panel styleClass="p-mb-3">
                 <h:inputHidden value="#{bookBean.book.id}" />
 
@@ -55,6 +138,13 @@
                 </div>
 
                 <div class="p-field p-mb-3">
+                    <p:outputLabel for="version" value="Version" />
+                    <p:inputText id="version" value="#{bookBean.book.version}"
+                                 readonly="true" styleClass="p-mb-2 p-d-block" />
+                    <h:inputHidden value="#{bookBean.book.version}" />
+                </div>
+
+                <div class="p-field p-mb-3">
                     <p:outputLabel for="authors" value="Authors" />
                     <p:selectManyMenu id="authors" value="#{bookBean.selectedAuthorIds}"
                                       styleClass="p-mb-2 p-d-block" showCheckbox="true">
@@ -76,7 +166,9 @@
                 </div>
 
                 <div class="p-d-flex p-mt-3">
-                    <p:commandButton value="Save" action="#{bookBean.save}" styleClass="p-mr-2" />
+                    <p:commandButton value="Save" action="#{bookBean.save}" styleClass="p-mr-2"
+                                     update="@form messages"
+                                     oncomplete="if(#{bookBean.conflictDetected}) PF('conflictDialog').show()"/>
                     <p:button value="Cancel" outcome="books" />
                 </div>
             </p:panel>

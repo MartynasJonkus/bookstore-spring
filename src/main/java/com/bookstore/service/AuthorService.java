@@ -1,9 +1,7 @@
 package com.bookstore.service;
 
 import com.bookstore.model.Author;
-import com.bookstore.model.Book;
 import com.bookstore.repository.AuthorRepository;
-import com.bookstore.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +13,10 @@ import java.util.Optional;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
-    private final BookRepository bookRepository;
 
     @Autowired
-    public AuthorService(AuthorRepository authorRepository, BookRepository bookRepository) {
+    public AuthorService(AuthorRepository authorRepository) {
         this.authorRepository = authorRepository;
-        this.bookRepository = bookRepository;
     }
 
     @Transactional(readOnly = true)
@@ -40,14 +36,6 @@ public class AuthorService {
 
     @Transactional
     public void deleteAuthorById(Long authorId) {
-        Author author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid author ID: " + authorId));
-
-        for (Book book : author.getBooks()) {
-            book.getAuthors().remove(author);
-            bookRepository.save(book);
-        }
-
         authorRepository.deleteById(authorId);
     }
 }

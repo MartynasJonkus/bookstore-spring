@@ -1,8 +1,6 @@
 package com.bookstore.service;
 
-import com.bookstore.model.Book;
 import com.bookstore.model.Publisher;
-import com.bookstore.repository.BookRepository;
 import com.bookstore.repository.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,12 +13,10 @@ import java.util.Optional;
 public class PublisherService {
 
     private final PublisherRepository publisherRepository;
-    private final BookRepository bookRepository;
 
     @Autowired
-    public PublisherService(PublisherRepository publisherRepository, BookRepository bookRepository) {
+    public PublisherService(PublisherRepository publisherRepository) {
         this.publisherRepository = publisherRepository;
-        this.bookRepository = bookRepository;
     }
 
     public List<Publisher> findAllPublishers() {
@@ -38,16 +34,6 @@ public class PublisherService {
 
     @Transactional
     public void deletePublisherById(Long id) {
-        Publisher publisher = publisherRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid publisher ID: " + id));
-
-        if (publisher.getBooks() != null) {
-            for (Book book : publisher.getBooks()) {
-                book.setPublisher(null);
-                bookRepository.save(book);
-            }
-        }
-
         publisherRepository.deleteById(id);
     }
 }

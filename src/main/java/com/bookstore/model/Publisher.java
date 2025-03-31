@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,5 +26,5 @@ public class Publisher {
 
     @OneToMany(mappedBy = "publisher")
     @JsonIgnore
-    private Set<Book> books;
+    private Set<Book> books = new HashSet<>();
 }
