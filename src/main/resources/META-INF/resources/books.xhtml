@@ -7,6 +7,18 @@
 <h:head>
     <meta charset="UTF-8" />
     <title>Books</title>
+    <style>
+        .stock-progress {
+            width: 120px;
+            margin: 5px 0;
+            background-color: #e9ecef;
+        }
+        .stock-result {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    </style>
 </h:head>
 <h:body>
     <div class="card">
@@ -46,6 +58,32 @@
             </p:column>
             <p:column headerText="Year">
                 <h:outputText value="#{book.publicationYear}" />
+            </p:column>
+            <p:column headerText="Stock">
+                <h:form>
+                    <h:panelGroup id="stockPanel" style="display: inline">
+                        <h:panelGroup id="wrapper#{book.id}">
+                            <p:commandButton value="Calculate Stock"
+                                             action="#{asyncStockBean.calculateStock(book.id)}"
+                                             update="@form:stockPanel"
+                                             rendered="#{not asyncStockBean.isCalculating(book.id) and
+                                         empty asyncStockBean.getResult(book.id)}"
+                                             styleClass="p-button-outlined"/>
+
+                            <p:progressBar id="pb#{book.id}"
+                                           mode="indeterminate"
+                                           style="width: 120px; height: 20px; margin-left: 10px;"
+                                           rendered="#{asyncStockBean.isCalculating(book.id)}" />
+
+                            <h:outputText value="#{asyncStockBean.getResult(book.id)}"
+                                          rendered="#{not empty asyncStockBean.getResult(book.id)}"
+                                          style="font-weight: bold; margin-left: 10px; color: var(--primary-color)"/>
+
+                            <p:poll interval="1" update="@form:stockPanel"
+                                    rendered="#{asyncStockBean.isCalculating(book.id)}"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:form>
             </p:column>
             <p:column headerText="Actions">
                 <h:form>
