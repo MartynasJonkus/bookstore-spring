@@ -1,27 +1,34 @@
 package com.bookstore.bean;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Named;
+import com.bookstore.aspect.TrackPerformance;
+import com.bookstore.service.StockService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Named
-@SessionScoped
+@Component
+@Scope("session")
 public class AsyncStockBean implements Serializable {
     private final Map<Long, CompletableFuture<Integer>> calculations = new ConcurrentHashMap<>();
     private final Map<Long, Integer> results = new ConcurrentHashMap<>();
-    private final Map<Long, Boolean> status = new ConcurrentHashMap<>();
+    final Map<Long, Boolean> status = new ConcurrentHashMap<>();
 
+    @Autowired
+    private StockService stockService;
+
+    @TrackPerformance
     public void calculateStock(Long bookId) {
         status.put(bookId, true);
 
         calculations.put(bookId, CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(3000);
-                return new Random().nextInt(100);
+                return stockService.calculateStock(bookId);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return -1;

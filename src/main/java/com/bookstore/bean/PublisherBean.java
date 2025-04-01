@@ -3,19 +3,20 @@ package com.bookstore.bean;
 import com.bookstore.model.Publisher;
 import com.bookstore.service.PublisherService;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Named;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.util.List;
 
-@Named
-@ViewScoped
+@Component
+@Scope("view")
 @Data
 @NoArgsConstructor
-public class PublisherBean implements Serializable {
+public class PublisherBean implements Serializable{
 
     @Autowired
     private transient PublisherService publisherService;

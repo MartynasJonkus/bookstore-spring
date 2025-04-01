@@ -1,5 +1,6 @@
 package com.bookstore.bean;
 
+import com.bookstore.aspect.TrackPerformance;
 import com.bookstore.model.Author;
 import com.bookstore.model.Book;
 import com.bookstore.model.Publisher;
@@ -109,6 +110,7 @@ public class BookBean implements Serializable {
         return clone;
     }
 
+    @TrackPerformance
     public String save() {
         try {
             Set<Author> authors = new HashSet<>();
@@ -161,6 +163,7 @@ public class BookBean implements Serializable {
         return "/books.xhtml?faces-redirect=true";
     }
 
+    @TrackPerformance
     public void loadBook() {
         if (editId != null && !conflictDetected) {
             book = bookService.findBookById(editId)
